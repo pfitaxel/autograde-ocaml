@@ -103,7 +103,7 @@ fi
 
 shift "$((OPTIND-1))" # Shift off the options and optional "--".
 if [ $# -lt 1 ]; then
-    echo "No file provided. The teacher's $sol_file file will be graded." >&2
+    echo "No file provided. The teacher's $solution_file file will be graded." >&2
     teacher_itself="true"
 fi
 
