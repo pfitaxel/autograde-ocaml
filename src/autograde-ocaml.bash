@@ -2,7 +2,7 @@
 
 # Copyright (c) 2016  Erik Martin-Dorel.
 
-template="/tmp/autograde-ocaml.XXXXXXXXXX"
+template="/tmp/autograde-ocaml.XXX"
 solution_file="solution.ml"
 test_file="test.ml"
 teach_files="{prelude.ml,prepare.ml,$solution_file,$test_file}"
@@ -31,7 +31,7 @@ Options:
   -b BIN  full path to the 'learnocaml-grader.byte' binary (mandatory)
 
   -d DIR  name of non-existing directory to be populated with results
-          (default: \$(mktemp --directory $template))
+          (default: \$(mktemp -d $template))
 
   -f DIR  name of teacher's source folder (mandatory) containing:
           $teach_files
@@ -91,7 +91,7 @@ if [ "x$from_dir" = "x" ]; then
 fi
 
 if [ "x$dest_dir" = "x" ]; then
-    dest_dir=$(mktemp --directory "$template")
+    dest_dir=$(mktemp -d "$template")
     echo "Created directory '$dest_dir' that will be populated with results." >&2
 else
     if [ -e "$dest_dir" ]; then
