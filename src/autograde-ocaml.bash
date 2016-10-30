@@ -6,6 +6,7 @@ template="/tmp/autograde-ocaml.XXXXXXXXXX"
 solution_file="solution.ml"
 test_file="test.ml"
 teach_files="{prelude.ml,prepare.ml,$solution_file,$test_file}"
+report_prefix="ocaml" # for example
 
 ## Initial values
 bin=""
@@ -124,12 +125,12 @@ if [ "$teacher_itself" = "true" ]; then
     fi
 
     ## Main command: no -grade-student option.
-    "$bin" "-display-progression" "-dump-reports" "$dir0/report" "$dir0"
+    "$bin" "-display-progression" "-dump-reports" "$dir0/$report_prefix" "$dir0"
     RET=$?
 
     { echo "done."; echo; } >&2
 
-    echo "See report in '$dest_dir'." >&2
+    echo "See report in: $dest_dir" >&2
 
     exit $RET
 fi
@@ -154,9 +155,9 @@ for arg; do
     fi
 
     ## Main command
-    "$bin" "-display-progression" "-grade-student" "-dump-reports" "$dir0/report" "$dir0"
+    "$bin" "-display-progression" "-grade-student" "-dump-reports" "$dir0/$report_prefix" "$dir0"
 
     { echo "done."; echo; } >&2
 done
 
-echo "See reports in '$dest_dir'." >&2
+echo "See reports in: $dest_dir" >&2
