@@ -125,14 +125,11 @@ if [ "$teacher_itself" = "true" ]; then
     fi
 
     ## Main command: no -grade-student option.
-    "$bin" "-display-progression" "-dump-reports" "$dir0/$report_prefix" "$dir0"
-    RET=$?
+    "$bin" "-display-progression" "-dump-reports" "$dir0/$report_prefix" "$dir0" || true
 
     { echo "done."; echo; } >&2
 
     echo "See report in: $dest_dir" >&2
-
-    exit $RET
 fi
 
 ## Main task
@@ -155,7 +152,7 @@ for arg; do
     fi
 
     ## Main command
-    "$bin" "-display-progression" "-grade-student" "-dump-reports" "$dir0/$report_prefix" "$dir0"
+    "$bin" "-display-progression" "-grade-student" "-dump-reports" "$dir0/$report_prefix" "$dir0" || true
 
     { echo "done."; echo; } >&2
 done
