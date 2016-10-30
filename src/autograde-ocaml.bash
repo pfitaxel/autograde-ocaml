@@ -116,7 +116,7 @@ if [ "$teacher_itself" = "true" ]; then
 
     #...
 
-    cp -av "$from_dir"/$teach_files "$dir0" #(no quotes)
+    eval cp -av "$from_dir"/$teach_files "$dir0" #(no quotes)
 
     ## Overwrite a trimmed file if need be
     if [ "$trim" = "true" ]; then
@@ -128,6 +128,8 @@ if [ "$teacher_itself" = "true" ]; then
     RET=$?
 
     { echo "done."; echo; } >&2
+
+    echo "See report in '$dest_dir'." >&2
 
     exit $RET
 fi
@@ -144,7 +146,7 @@ for arg; do
 
     cp -av "$arg" "$dir0/student.ml"
 
-    cp -av "$from_dir"/$teach_files "$dir0" #(no quotes)
+    eval cp -av "$from_dir"/$teach_files "$dir0" #(no quotes)
 
     ## Overwrite a trimmed file if need be
     if [ "$trim" = "true" ]; then
@@ -156,3 +158,5 @@ for arg; do
 
     { echo "done."; echo; } >&2
 done
+
+echo "See reports in '$dest_dir'." >&2
