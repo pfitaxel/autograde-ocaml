@@ -43,7 +43,7 @@ Options:
 
 Remark: make sure that the OPAM env. variables are properly set.
 
-Author of this script: Erik Martin-Dorel.
+Author: Erik Martin-Dorel.
 EOF
 }
 
