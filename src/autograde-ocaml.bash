@@ -20,10 +20,12 @@ set -e
 
 function usage () {
     cat <<EOF
-Usage: $(basename "$0") [OPTIONS] [--] FILE.ml ...
-       $(basename "$0") [-t] -f DIR
+Usage: $(basename "$0") [options] -b BIN -f DIR [--] FILE.ml ...
+       $(basename "$0") [options] -b BIN -f DIR
 
 Auto-grade OCaml assignments.
+
+Remark: make sure that the OPAM env. variables are properly set.
 
 Options:
   -h      display this help and exit
