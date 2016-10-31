@@ -119,7 +119,7 @@ function html-head () {
 <!doctype html>
 <html lang="en">
   <head>
-    <meta charset="UTF-8">
+    <meta charset="ISO-8859-1">
     <title>OCaml report - $1</title>
   </head>
   <body>
