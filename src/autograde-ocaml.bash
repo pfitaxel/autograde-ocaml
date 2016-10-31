@@ -114,6 +114,33 @@ if [ $# -lt 1 ]; then
     teacher_itself="true"
 fi
 
+function html-head () {
+    cat <<EOF
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <title>OCaml report</title>
+  </head>
+  <body>
+EOF
+}
+
+function html-foot () {
+    cat <<EOF
+  </body>
+</html>
+EOF
+}
+
+function htmlify () {
+    F="$1"
+    T=$(mktemp "$F.XXX")
+    cp -a "$F" "$T"
+    { html-head; cat "$T"; html-foot; } > "$F"
+    rm -f "$T"
+}
+
 ## Teacher test
 
 if [ "$teacher_itself" = "true" ]; then
@@ -133,6 +160,8 @@ if [ "$teacher_itself" = "true" ]; then
 
     ## Main command: no -grade-student option.
     "$bin" "-display-progression" "-dump-reports" "$dir0/$report_prefix" "$dir0" || true
+
+    htmlify "$dir0/$report_prefix.report.html"
 
     eval rm -f "$dir0"/$teach_files #(no quotes)
 
@@ -165,6 +194,8 @@ for arg; do
 
     ## Main command
     "$bin" "-display-progression" "-grade-student" "-dump-reports" "$dir0/$report_prefix" "$dir0" || true
+
+    htmlify "$dir0/$report_prefix.report.html"
 
     eval rm -f "$dir0"/$teach_files #(no quotes)
 
