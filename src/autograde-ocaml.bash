@@ -25,7 +25,8 @@ Usage: $(basename "$0") [options] -b BIN -f DIR [--] FILE.ml ...
 
 Auto-grade OCaml assignments.
 
-Remark: make sure that the OPAM env. variables are properly set.
+If there is no given .ml file, the teachers's $solution_file file itself
+will be graded.
 
 Options:
   -h      display this help and exit
@@ -40,8 +41,7 @@ Options:
 
   -t      trim $test_file file by removing its first and last line
 
-If there is no given .ml file, the teachers's $solution_file file itself
-will be graded.
+Remark: make sure that the OPAM env. variables are properly set.
 
 Author of this script: Erik Martin-Dorel.
 EOF
