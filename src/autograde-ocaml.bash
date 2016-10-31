@@ -121,6 +121,7 @@ if [ "$teacher_itself" = "true" ]; then
 
     ## Overwrite a trimmed file if need be
     if [ "$trim" = "true" ]; then
+        echo "Overwrite '$dir0/$test_file' after trimming." >&2
         tail -n+2 < "$from_dir/$test_file" | head -n-1 > "$dir0/$test_file"
     fi
 
@@ -148,6 +149,7 @@ for arg; do
 
     ## Overwrite a trimmed file if need be
     if [ "$trim" = "true" ]; then
+        echo "Overwrite '$dir0/$test_file' after trimming." >&2
         tail -n+2 < "$from_dir/$test_file" | head -n-1 > "$dir0/$test_file"
     fi
 
