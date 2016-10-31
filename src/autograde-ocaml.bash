@@ -130,6 +130,8 @@ if [ "$teacher_itself" = "true" ]; then
     ## Main command: no -grade-student option.
     "$bin" "-display-progression" "-dump-reports" "$dir0/$report_prefix" "$dir0" || true
 
+    eval rm -f "$dir0"/$teach_files #(no quotes)
+
     { echo "done."; echo; } >&2
 
     echo "See report in: $dest_dir" >&2
@@ -159,6 +161,8 @@ for arg; do
 
     ## Main command
     "$bin" "-display-progression" "-grade-student" "-dump-reports" "$dir0/$report_prefix" "$dir0" || true
+
+    eval rm -f "$dir0"/$teach_files #(no quotes)
 
     { echo "done."; echo; } >&2
 done
