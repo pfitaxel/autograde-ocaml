@@ -131,6 +131,8 @@ if [ "$teacher_itself" = "true" ]; then
     { echo "done."; echo; } >&2
 
     echo "See report in: $dest_dir" >&2
+
+    exit 0
 fi
 
 ## Main task
