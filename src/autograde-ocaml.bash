@@ -33,7 +33,7 @@ Options:
 
   -b BIN  full path to the 'learnocaml-grader.byte' binary (mandatory)
 
-  -d DIR  name of non-existing directory to be populated with results
+  -d DIR  name of non-existing or empty directory to be populated with results
           (default: \$(mktemp -d $template))
 
   -f DIR  name of teacher's source folder (mandatory) containing:
@@ -97,11 +97,15 @@ if [ "x$dest_dir" = "x" ]; then
     echo "Created directory '$dest_dir' that will be populated with results." >&2
 else
     if [ -e "$dest_dir" ]; then
-        echo "Error: -d '$dest_dir': file or directory already exists, a new path is expected." >&2
-        usage >&2
-        exit 1
+        if [ ! -d "$dest_dir" ] || ( ls -1qA "$dest_dir" | grep -q . ); then
+            echo "Error: -d '$dest_dir': is a non-empty directory or an existing file." >&2
+            usage >&2
+            exit 1
+        # else OK
+        fi
+    else
+        mkdir -v -p "$dest_dir"
     fi
-    mkdir -v -p "$dest_dir"
 fi
 
 shift "$((OPTIND-1))" # Shift off the options and optional "--".
