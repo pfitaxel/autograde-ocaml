@@ -120,7 +120,7 @@ function html-head () {
 <html lang="en">
   <head>
     <meta charset="UTF-8">
-    <title>OCaml report</title>
+    <title>OCaml report - $1</title>
   </head>
   <body>
 EOF
@@ -137,7 +137,7 @@ function htmlify () {
     F="$1"
     T=$(mktemp "$F.XXX")
     cp -a "$F" "$T"
-    { html-head; cat "$T"; html-foot; } > "$F"
+    { html-head "$2"; cat "$T"; html-foot; } > "$F"
     rm -f "$T"
 }
 
@@ -161,7 +161,7 @@ if [ "$teacher_itself" = "true" ]; then
     ## Main command: no -grade-student option.
     "$bin" "-display-progression" "-dump-reports" "$dir0/$report_prefix" "$dir0" || true
 
-    htmlify "$dir0/$report_prefix.report.html"
+    htmlify "$dir0/$report_prefix.report.html" "$solution_file"
 
     eval rm -f "$dir0"/$teach_files #(no quotes)
 
@@ -195,7 +195,7 @@ for arg; do
     ## Main command
     "$bin" "-display-progression" "-grade-student" "-dump-reports" "$dir0/$report_prefix" "$dir0" || true
 
-    htmlify "$dir0/$report_prefix.report.html"
+    htmlify "$dir0/$report_prefix.report.html" "$arg"
 
     eval rm -f "$dir0"/$teach_files #(no quotes)
 
