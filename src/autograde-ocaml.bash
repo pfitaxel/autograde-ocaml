@@ -75,7 +75,7 @@ while getopts "htb:f:d:" opt; do
 done
 
 if [ "x$bin" = "x" ]; then
-    echo "Error: you must specify the path to the learnocaml-grader binary (-b …)." >&2
+    echo "Error: you must specify the path to the learnocaml-grader binary (-b BIN)." >&2
     usage >&2
     exit 1
 fi
@@ -87,7 +87,7 @@ if [ ! -x "$bin" ]; then
 fi
 
 if [ "x$from_dir" = "x" ]; then
-    echo "Error: you must specify the path to the teacher's source folder (-f …)." >&2
+    echo "Error: you must specify the path to the teacher's source folder (-f DIR)." >&2
     usage >&2
     exit 1
 fi
