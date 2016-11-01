@@ -14,6 +14,7 @@ dest_dir=""
 from_dir=""
 trim="false"
 teacher_itself="false"
+max_pts=""
 
 ## Exit immediately in case of an error
 set -e
@@ -41,6 +42,9 @@ Options:
 
   -t      trim $test_file file by removing its first and last line
 
+  -m INT  maximum number of points (optional): add the string "/ INT"
+          in the html report
+
 Remark: make sure that the OPAM env. variables are properly set.
 
 Author: Erik Martin-Dorel.
@@ -49,7 +53,7 @@ EOF
 
 ## Parse options
 OPTIND=1 # Reset is necessary if getopts was used previously in the script.  It is a good idea to make this local in a function.
-while getopts "htb:f:d:" opt; do
+while getopts "htb:f:d:m:" opt; do
     case "$opt" in
         h)
             usage
@@ -66,6 +70,9 @@ while getopts "htb:f:d:" opt; do
             ;;
         d)
             dest_dir="$OPTARG"
+            ;;
+        m)
+            max_pts="$OPTARG"
             ;;
         '?')
             usage >&2
@@ -133,11 +140,24 @@ function html-foot () {
 EOF
 }
 
+function cat-sed-max () {
+    fil="$1"
+    max="$2"
+    if [ "x$max" != "x" ]; then
+        # requires GNU sed
+        sed -e "0,/\(<span class=\"score\">[0-9]* pts\)\(<\/span>\)/s||\1 / $max\2|" "$fil"
+    else
+        cat "$fil"
+    fi
+}
+
 function htmlify () {
     F="$1"
+    H="$2"
+    M="$3"
     T=$(mktemp "$F.XXX")
     cp -a "$F" "$T"
-    { html-head "$2"; cat "$T"; html-foot; } > "$F"
+    { html-head "$H"; cat-sed-max "$T" "$M"; html-foot; } > "$F"
     rm -f "$T"
 }
 
@@ -161,7 +181,7 @@ if [ "$teacher_itself" = "true" ]; then
     ## Main command: no -grade-student option.
     "$bin" "-display-progression" "-dump-reports" "$dir0/$report_prefix" "$dir0" || true
 
-    htmlify "$dir0/$report_prefix.report.html" "$solution_file"
+    htmlify "$dir0/$report_prefix.report.html" "$solution_file" "$max_pts"
 
     eval rm -f "$dir0"/$teach_files #(no quotes)
 
@@ -195,7 +215,7 @@ for arg; do
     ## Main command
     "$bin" "-display-progression" "-grade-student" "-dump-reports" "$dir0/$report_prefix" "$dir0" || true
 
-    htmlify "$dir0/$report_prefix.report.html" "$arg"
+    htmlify "$dir0/$report_prefix.report.html" "$arg" "$max_pts"
 
     eval rm -f "$dir0"/$teach_files #(no quotes)
 
