@@ -8,7 +8,7 @@ It consists of a Bash script (autograde-ocaml.bash) that calls a
 specific version of learn-ocaml's CLI tool (learnocaml-grader.byte),
 fed on dedicated automated tests (provided by the teacher).
 
-Report bugs to: [Erik Martin-Dorel](erik.martin-dorel@irit.fr)
+Report bugs to: [Erik Martin-Dorel](mailto:erik.martin-dorel@irit.fr)
 
 Usage summary
 -------------
