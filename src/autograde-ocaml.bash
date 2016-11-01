@@ -171,7 +171,7 @@ if [ "$teacher_itself" = "true" ]; then
 
     #...
 
-    eval cp -av "$from_dir"/$teach_files "$dir0" #(no quotes)
+    eval cp -av "'$from_dir'"/$teach_files "'$dir0'" #(caution)
 
     ## Overwrite a trimmed file if need be
     if [ "$trim" = "true" ]; then
@@ -189,7 +189,7 @@ if [ "$teacher_itself" = "true" ]; then
         htmlify "$dir0/$report_prefix.report.html" "$solution_file" "$max_pts"
     fi
 
-    eval rm -f "$dir0"/$teach_files #(no quotes)
+    eval rm -f "'$dir0'"/$teach_files #(caution)
 
     { echo "done."; echo; } >&2
 
@@ -210,7 +210,7 @@ for arg; do
 
     cp -av "$arg" "$dir0/student.ml"
 
-    eval cp -av "$from_dir"/$teach_files "$dir0" #(no quotes)
+    eval cp -av "'$from_dir'"/$teach_files "'$dir0'" #(caution)
 
     ## Overwrite a trimmed file if need be
     if [ "$trim" = "true" ]; then
@@ -228,7 +228,7 @@ for arg; do
         htmlify "$dir0/$report_prefix.report.html" "$arg" "$max_pts"
     fi
 
-    eval rm -f "$dir0"/$teach_files #(no quotes)
+    eval rm -f "'$dir0'"/$teach_files #(caution)
 
     { echo "done."; echo; } >&2
 done
