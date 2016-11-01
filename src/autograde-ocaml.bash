@@ -222,7 +222,7 @@ for arg; do
     RET=0; timeout "$max_time" "$bin" "-display-progression" "-grade-student" "-dump-reports" "$dir0/$report_prefix" "$dir0" || RET=$?
 
     if [ $RET -eq 124 ]; then
-        echo "Timeout. Maybe due to unbounded recursion?" > "$dir0/$report_prefix.timeout"
+        echo "Timeout. Maybe due to looping recursion?" > "$dir0/$report_prefix.timeout"
         cat "$dir0/$report_prefix.timeout" >&2
     else
         htmlify "$dir0/$report_prefix.report.html" "$arg" "$max_pts"
