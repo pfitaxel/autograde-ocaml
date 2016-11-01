@@ -7,6 +7,7 @@ solution_file="solution.ml"
 test_file="test.ml"
 teach_files="{prelude.ml,prepare.ml,$solution_file,$test_file}"
 report_prefix="ocaml" # for example
+max_time="4s"
 
 ## Initial values
 bin=""
@@ -179,9 +180,14 @@ if [ "$teacher_itself" = "true" ]; then
     fi
 
     ## Main command: no -grade-student option.
-    "$bin" "-display-progression" "-dump-reports" "$dir0/$report_prefix" "$dir0" || true
+    RET=0; timeout "$max_time" "$bin" "-display-progression" "-dump-reports" "$dir0/$report_prefix" "$dir0" || RET=$?
 
-    htmlify "$dir0/$report_prefix.report.html" "$solution_file" "$max_pts"
+    if [ $RET -eq 124 ]; then
+        echo "Timeout. Maybe due to unbounded recursion?" > "$dir0/$report_prefix.timeout"
+        cat "$dir0/$report_prefix.timeout" >&2
+    else
+        htmlify "$dir0/$report_prefix.report.html" "$solution_file" "$max_pts"
+    fi
 
     eval rm -f "$dir0"/$teach_files #(no quotes)
 
@@ -213,9 +219,14 @@ for arg; do
     fi
 
     ## Main command
-    "$bin" "-display-progression" "-grade-student" "-dump-reports" "$dir0/$report_prefix" "$dir0" || true
+    RET=0; timeout "$max_time" "$bin" "-display-progression" "-grade-student" "-dump-reports" "$dir0/$report_prefix" "$dir0" || RET=$?
 
-    htmlify "$dir0/$report_prefix.report.html" "$arg" "$max_pts"
+    if [ $RET -eq 124 ]; then
+        echo "Timeout. Maybe due to unbounded recursion?" > "$dir0/$report_prefix.timeout"
+        cat "$dir0/$report_prefix.timeout" >&2
+    else
+        htmlify "$dir0/$report_prefix.report.html" "$arg" "$max_pts"
+    fi
 
     eval rm -f "$dir0"/$teach_files #(no quotes)
 
