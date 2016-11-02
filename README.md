@@ -18,11 +18,11 @@ Usage summary
 3. Clone this repo.
 4. **Write the teacher's solution (solution.ml) and ad-hoc grader (test.ml).**
 5. Put {prelude.ml,prepare.ml,solution.ml,test.ml} in the same folder (prof).
-6. Put all submissions in the same folder (rendus).
+6. Put all submissions in the same folder (submissions).
 7. Make sure that the OPAM environment variables are properly set.
 8. Run autograde-ocaml.bash:  
    `.../autograde-ocaml.bash -b ... -f prof`  
-   `.../autograde-ocaml.bash -b ... -f prof -m ... rendus/*.ml`  
+   `.../autograde-ocaml.bash -b ... -f prof -m ... submissions/*.ml`  
 9. Address the failing submissions (compilation error, looping recursion, ...).
 
 (The step 4 above will typically be the most time-consuming task.)
