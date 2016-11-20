@@ -225,7 +225,7 @@ for arg; do
         echo "Timeout. Maybe due to looping recursion?" > "$dir0/$report_prefix.timeout"
         cat "$dir0/$report_prefix.timeout" >&2
     else
-        htmlify "$dir0/$report_prefix.report.html" "$arg" "$max_pts"
+        htmlify "$dir0/$report_prefix.report.html" "$base0.ml" "$max_pts"
     fi
 
     eval rm -f "'$dir0'"/$teach_files #(caution)
