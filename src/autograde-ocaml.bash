@@ -169,7 +169,7 @@ if [ "$teacher_itself" = "true" ]; then
 
     dir0="$dest_dir"
 
-    #...
+    # (there is only one file to grade; no need to create subfolders)
 
     for f in "${teach_files[@]}"; do
         cp -pv "$from_dir/$f" "$dir0"
