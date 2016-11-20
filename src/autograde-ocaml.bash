@@ -5,7 +5,7 @@
 template="/tmp/autograde-ocaml.XXX"
 solution_file="solution.ml"
 test_file="test.ml"
-teach_files="{prelude.ml,prepare.ml,$solution_file,$test_file}"
+teach_files=(prelude.ml prepare.ml "$solution_file" "$test_file")
 report_prefix="ocaml" # for example
 max_time="4s"
 
@@ -39,7 +39,7 @@ Options:
           (default: \$(mktemp -d $template))
 
   -f DIR  name of teacher's source folder (mandatory) containing:
-          $teach_files
+          ${teach_files[@]}
 
   -t      trim $test_file file by removing its first and last line
 
@@ -171,7 +171,9 @@ if [ "$teacher_itself" = "true" ]; then
 
     #...
 
-    eval cp -av "'$from_dir'"/$teach_files "'$dir0'" #(caution)
+    for f in "${teach_files[@]}"; do
+        cp -pv "$from_dir/$f" "$dir0"
+    done
 
     ## Overwrite a trimmed file if need be
     if [ "$trim" = "true" ]; then
@@ -189,7 +191,9 @@ if [ "$teacher_itself" = "true" ]; then
         htmlify "$dir0/$report_prefix.report.html" "$solution_file" "$max_pts"
     fi
 
-    eval rm -f "'$dir0'"/$teach_files #(caution)
+    for f in "${teach_files[@]}"; do
+        rm -f "$dir0/$f"
+    done
 
     { echo "done."; echo; } >&2
 
@@ -210,7 +214,9 @@ for arg; do
 
     cp -av "$arg" "$dir0/student.ml"
 
-    eval cp -av "'$from_dir'"/$teach_files "'$dir0'" #(caution)
+    for f in "${teach_files[@]}"; do
+        cp -pv "$from_dir/$f" "$dir0"
+    done
 
     ## Overwrite a trimmed file if need be
     if [ "$trim" = "true" ]; then
@@ -228,7 +234,9 @@ for arg; do
         htmlify "$dir0/$report_prefix.report.html" "$base0.ml" "$max_pts"
     fi
 
-    eval rm -f "'$dir0'"/$teach_files #(caution)
+    for f in "${teach_files[@]}"; do
+        rm -f "$dir0/$f"
+    done
 
     { echo "done."; echo; } >&2
 done
