@@ -205,6 +205,15 @@ fi
 ## Main task
 
 for arg; do
+
+    if [ -d "$arg" ]; then
+        echo "Error: '$arg' is a directory, not a .ml submission." >&2
+        exit 1
+    elif [ ! -r "$arg" ]; then
+        echo "Error: file '$arg' does not exist or is not readable." >&2
+        exit 1
+    fi
+
     echo "Grading '$arg'..." >&2
 
     base0=$(basename -s .ml "$arg")
