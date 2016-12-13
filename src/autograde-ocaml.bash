@@ -18,7 +18,7 @@ teacher_itself="false"
 max_pts=""
 
 ## Exit immediately in case of an error
-set -e
+set -euo pipefail
 
 function usage () {
     cat <<EOF
@@ -236,12 +236,15 @@ for arg; do
     fi
 
     ## Main command
-    RET=0; timeout "$max_time" "$bin" "-display-progression" "-grade-student" "-dump-reports" "$dir0/$report_prefix" "$dir0" || RET=$?
+    RET=0; timeout "$max_time" "$bin" "-display-progression" "-grade-student" "-dump-reports" "$dir0/$report_prefix" "$dir0" 2>&1 | tee "$dir0/$report_prefix.error" || RET=$?
 
     if [ $RET -eq 124 ]; then
-        echo "Timeout. Maybe due to looping recursion?" > "$dir0/$report_prefix.timeout"
-        cat "$dir0/$report_prefix.timeout" >&2
+        echo "Timeout. Maybe due to looping recursion?" | tee -a "$dir0/$report_prefix.error"
+        less "$dir0/$report_prefix.error"
+    elif [ $RET -ne 0 ]; then
+        less "$dir0/$report_prefix.error"
     else
+        rm "$dir0/$report_prefix.error"
         htmlify "$dir0/$report_prefix.report.html" "$base0.ml" "$max_pts"
     fi
 
