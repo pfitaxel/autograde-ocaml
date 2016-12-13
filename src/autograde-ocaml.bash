@@ -16,6 +16,7 @@ from_dir=""
 trim="false"
 teacher_itself="false"
 max_pts=""
+keep_going="false"
 
 ## Exit immediately in case of an error
 set -euo pipefail
@@ -46,6 +47,9 @@ Options:
   -m INT  maximum number of points (optional): add the string "/ INT"
           in the html report
 
+  -k      keep going: when there is an error with a submission, do not
+          call 'less' on the error file
+
 Remark: make sure that the OPAM env. variables are properly set.
 
 Author: Erik Martin-Dorel.
@@ -54,7 +58,7 @@ EOF
 
 ## Parse options
 OPTIND=1 # Reset is necessary if getopts was used previously in the script.  It is a good idea to make this local in a function.
-while getopts "htb:f:d:m:" opt; do
+while getopts "htb:f:d:m:k" opt; do
     case "$opt" in
         h)
             usage
@@ -74,6 +78,9 @@ while getopts "htb:f:d:m:" opt; do
             ;;
         m)
             max_pts="$OPTARG"
+            ;;
+        k)
+            keep_going="true"
             ;;
         '?')
             usage >&2
@@ -244,11 +251,15 @@ for arg; do
     if [ $RET -eq 124 ]; then
         echo "Timeout: [[file:$base0/$report_prefix.error]]" >> "$errLog"
         echo "Timeout. Maybe due to looping recursion?" | tee -a "$dir0/$report_prefix.error"
-        less "$dir0/$report_prefix.error"
+        if [ "$keep_going" = "false" ]; then
+            less "$dir0/$report_prefix.error"
+        fi
     elif [ $RET -ne 0 -a $RET -ne 2 ]; then
         echo "Error $RET: [[file:$base0/$report_prefix.error]]" >> "$errLog"
         echo "Grader exited with error code $RET." | tee -a "$dir0/$report_prefix.error"
-        less "$dir0/$report_prefix.error"
+        if [ "$keep_going" = "false" ]; then
+            less "$dir0/$report_prefix.error"
+        fi
     else
         rm "$dir0/$report_prefix.error"
         htmlify "$dir0/$report_prefix.report.html" "$base0.ml" "$max_pts"
