@@ -214,7 +214,7 @@ for arg; do
     fi
 done
 
-errLog="$dest_dir/error.log"
+errLog="$dest_dir/error.org"
 > "$errLog"
 
 for arg; do
@@ -242,11 +242,11 @@ for arg; do
     RET=0; timeout "$max_time" "$bin" "-display-progression" "-grade-student" "-dump-reports" "$dir0/$report_prefix" "$dir0" 2>&1 | tee "$dir0/$report_prefix.error" || RET=$?
 
     if [ $RET -eq 124 ]; then
-        echo "Timeout: $dir0/$report_prefix.error" >> "$errLog"
+        echo "Timeout: [[file:$base0/$report_prefix.error]]" >> "$errLog"
         echo "Timeout. Maybe due to looping recursion?" | tee -a "$dir0/$report_prefix.error"
         less "$dir0/$report_prefix.error"
     elif [ $RET -ne 0 -a $RET -ne 2 ]; then
-        echo "Error $RET: $dir0/$report_prefix.error" >> "$errLog"
+        echo "Error $RET: [[file:$base0/$report_prefix.error]]" >> "$errLog"
         echo "Grader exited with error code $RET." | tee -a "$dir0/$report_prefix.error"
         less "$dir0/$report_prefix.error"
     else
