@@ -241,7 +241,8 @@ for arg; do
     if [ $RET -eq 124 ]; then
         echo "Timeout. Maybe due to looping recursion?" | tee -a "$dir0/$report_prefix.error"
         less "$dir0/$report_prefix.error"
-    elif [ $RET -ne 0 ]; then
+    elif [ $RET -ne 0 -a $RET -ne 2 ]; then
+        echo "Grader exited with error code $RET." | tee -a "$dir0/$report_prefix.error"
         less "$dir0/$report_prefix.error"
     else
         rm "$dir0/$report_prefix.error"
