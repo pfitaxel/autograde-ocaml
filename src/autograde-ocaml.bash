@@ -8,6 +8,7 @@ test_file="test.ml"
 teach_files=(prelude.ml prepare.ml "$solution_file" "$test_file")
 report_prefix="ocaml" # for example
 max_time="4s"
+student_file="student.ml"
 
 ## Initial values
 bin=""
@@ -233,7 +234,7 @@ for arg; do
 
     mkdir -v "$dir0"
 
-    cp -av "$arg" "$dir0/student.ml"
+    cp -av "$arg" "$dir0/$student_file"
 
     for f in "${teach_files[@]}"; do
         cp -pv "$from_dir/$f" "$dir0"
@@ -249,13 +250,19 @@ for arg; do
     RET=0; timeout "$max_time" "$bin" "-display-progression" "-grade-student" "-dump-reports" "$dir0/$report_prefix" "$dir0" 2>&1 | tee "$dir0/$report_prefix.error" || RET=$?
 
     if [ $RET -eq 124 ]; then
-        echo "Timeout: [[file:$base0/$report_prefix.error]]" >> "$errLog"
+        cat >> "$errLog" <<EOF
+* Timeout: [[file:$base0/$report_prefix.error]]
+Source: [[file:$base0/$student_file]]
+EOF
         echo "Timeout. Maybe due to looping recursion?" | tee -a "$dir0/$report_prefix.error"
         if [ "$keep_going" = "false" ]; then
             less "$dir0/$report_prefix.error"
         fi
     elif [ $RET -ne 0 -a $RET -ne 2 ]; then
-        echo "Error $RET: [[file:$base0/$report_prefix.error]]" >> "$errLog"
+        cat >> "$errLog" <<EOF
+* Error $RET: [[file:$base0/$report_prefix.error]]
+Source: [[file:$base0/$student_file]]
+EOF
         echo "Grader exited with error code $RET." | tee -a "$dir0/$report_prefix.error"
         if [ "$keep_going" = "false" ]; then
             less "$dir0/$report_prefix.error"
