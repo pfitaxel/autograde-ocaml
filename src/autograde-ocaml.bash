@@ -2,6 +2,8 @@
 
 # Copyright (c) 2016  Erik Martin-Dorel.
 
+# todo: rewrite using cmdliner?
+
 template="/tmp/autograde-ocaml.XXX"
 solution_file="solution.ml"
 test_file="test.ml"
