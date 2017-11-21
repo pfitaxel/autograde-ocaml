@@ -22,8 +22,8 @@ Usage summary
 6. Put all submissions in the same folder (submissions).
 7. Make sure that the OPAM environment variables are properly set.
 8. Run autograde-ocaml.bash:  
-   `.../autograde-ocaml.bash -b ... -f prof`  
-   `.../autograde-ocaml.bash -b ... -f prof -m ... submissions/*.ml`  
+   `.../autograde-ocaml.bash -b ... -f prof [-t]`  
+   `.../autograde-ocaml.bash -b ... -f prof [-t] -m ... submissions/*.ml`  
 9. Address the failing submissions (compilation error, looping recursion, ...).
 
 (The step 4 above will typically be the most time-consuming task.)
