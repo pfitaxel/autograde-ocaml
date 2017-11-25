@@ -156,7 +156,7 @@ function cat-sed-max () {
     max="$2"
     if [ "x$max" != "x" ]; then
         # requires GNU sed
-        sed -e "0,/\(<span class=\"score\">[0-9]* pts\)\(<\/span>\)/s||\1 / $max\2|" "$fil"
+        sed -e "0,/\(<span class=\"score\">[-0-9]* pts\?\)\(<\/span>\)/s||\1 / $max\2|" "$fil"
     else
         cat "$fil"
     fi
