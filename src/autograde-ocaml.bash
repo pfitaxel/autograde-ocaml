@@ -9,7 +9,6 @@ solution_file="solution.ml"
 test_file="test.ml"
 teach_files=(prelude.ml prepare.ml "$solution_file" "$test_file")
 report_prefix="ocaml" # for example
-max_time="4s"
 student_file="student.ml"
 
 ## Initial values
@@ -20,6 +19,7 @@ trim="false"
 teacher_itself="false"
 max_pts=""
 keep_going="false"
+max_time="60s"
 
 ## Exit immediately in case of an error
 set -euo pipefail
@@ -53,6 +53,8 @@ Options:
   -k      keep going: when there is an error with a submission, do not
           call 'less' on the error file
 
+  -x 60s  timeout (default $max_time): maximum time length to grade one submission
+
 Remark: make sure that the OPAM env. variables are properly set.
 
 Author: Erik Martin-Dorel.
@@ -61,7 +63,7 @@ EOF
 
 ## Parse options
 OPTIND=1 # Reset is necessary if getopts was used previously in the script.  It is a good idea to make this local in a function.
-while getopts "htb:f:d:m:k" opt; do
+while getopts "htb:f:d:m:kx:" opt; do
     case "$opt" in
         h)
             usage
@@ -84,6 +86,9 @@ while getopts "htb:f:d:m:k" opt; do
             ;;
         k)
             keep_going="true"
+            ;;
+        x)
+            max_time="$OPTARG"
             ;;
         '?')
             usage >&2
