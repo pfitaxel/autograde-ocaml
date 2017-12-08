@@ -20,6 +20,7 @@ teacher_itself="false"
 max_pts=""
 keep_going="false"
 max_time="60s"
+ind_time="4" # in secs
 
 ## Exit immediately in case of an error
 set -euo pipefail
@@ -197,7 +198,7 @@ if [ "$teacher_itself" = "true" ]; then
     fi
 
     ## Main command: no -grade-student option.
-    RET=0; timeout "$max_time" "$bin" "-display-progression" "-dump-reports" "$dir0/$report_prefix" "$dir0" || RET=$?
+    RET=0; timeout "$max_time" "$bin" "-timeout" "$ind_time" "-display-progression" "-dump-reports" "$dir0/$report_prefix" "$dir0" || RET=$?
 
     if [ $RET -eq 124 ]; then
         echo "Timeout. Maybe due to unbounded recursion?" > "$dir0/$report_prefix.timeout"
@@ -254,7 +255,7 @@ for arg; do
     fi
 
     ## Main command
-    RET=0; timeout "$max_time" "$bin" "-display-progression" "-grade-student" "-dump-reports" "$dir0/$report_prefix" "$dir0" 2>&1 | tee "$dir0/$report_prefix.error" || RET=$?
+    RET=0; timeout "$max_time" "$bin" "-timeout" "$ind_time" "-display-progression" "-grade-student" "-dump-reports" "$dir0/$report_prefix" "$dir0" 2>&1 | tee "$dir0/$report_prefix.error" || RET=$?
 
     if [ $RET -eq 124 ]; then
         cat >> "$errLog" <<EOF
@@ -265,6 +266,9 @@ EOF
         if [ "$keep_going" = "false" ]; then
             less "$dir0/$report_prefix.error"
         fi
+    elif [ $RET -eq 130 ]; then
+        echo "Script interrupted." >&2
+        exit 130
     elif [ $RET -ne 0 -a $RET -ne 2 ]; then
         cat >> "$errLog" <<EOF
 * Error $RET: [[file:$base0/$report_prefix.error]]
