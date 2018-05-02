@@ -8,14 +8,15 @@ It consists of a Bash script (autograde-ocaml.bash) that calls a
 specific version of learn-ocaml's CLI tool (learnocaml-grader.byte),
 fed on dedicated automated tests (provided by the teacher).
 
-Report bugs to: [Erik Martin-Dorel](mailto:erik.martin-dorel@irit.fr)
+For reporting bugs: feel free to create a [GitHub issue](https://github.com/pfitaxel/autograde-ocaml/issues/new).
 
 Usage summary
 -------------
 
-1. Clone my fork of the learn-ocaml repo and switch to branch feature/batch.
+1. Clone the [pfitaxel fork of learn-ocaml](https://github.com/pfitaxel/learn-ocaml) and switch to branch wip:  
+   `git clone -b wip https://github.com/pfitaxel/learn-ocaml.git`
 2. Build learn-ocaml.
-3. Clone this repo.
+3. Clone [this repo](https://github.com/pfitaxel/autograde-ocaml).
 4. **Write the teacher's solution (solution.ml) and ad-hoc grader (test.ml).**
 5. Put {prelude.ml,prepare.ml,solution.ml,test.ml} in the same folder (prof).
 6. Put all submissions in the same folder (submissions).
