@@ -20,7 +20,7 @@ Usage summary
 5. Put all submissions in the same folder or in subdirs of the same folder (submissions).
 6. Run autograde-ocaml.bash:  
    `.../autograde-ocaml.bash -f prof`  
-   `.../autograde-ocaml.bash -f prof -m 80 -x 60s -d results -- submissions/*/*.ml`  
+   `.../autograde-ocaml.bash -f prof -m 80 -x 60s -k -d results -- submissions/*/*.ml`  
 7. Address the failing submissions (compilation error, looping recursion, ...).
 
 (The step 3 above will typically be the most time-consuming task.)
