@@ -259,7 +259,7 @@ EOF
     elif [ $RET -eq 130 ]; then
         echo "Script interrupted." >&2
         exit 130
-    elif [ $RET -ne 0 -a $RET -ne 2 ]; then
+    elif [ $RET -ne 0 ] && [ $RET -ne 2 ] && [ $RET -ne 1 ]; then
         cat >> "$errLog" <<EOF
 * Error $RET: [[file:$base0/$report_prefix.error]]
 Source: [[file:$base0/$student_file]]
