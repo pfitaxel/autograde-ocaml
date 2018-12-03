@@ -1,18 +1,18 @@
 #!/bin/bash
 
-# Copyright (c) 2016  Erik Martin-Dorel.
+# Copyright (c) 2016-2018  Erik Martin-Dorel.
 
 # todo: rewrite using cmdliner?
 
 template="/tmp/autograde-ocaml.XXX"
 solution_file="solution.ml"
 test_file="test.ml"
-teach_files=(prelude.ml prepare.ml "$solution_file" "$test_file")
+teach_files=(prelude.ml prepare.ml "$solution_file" "$test_file" template.ml)
 report_prefix="ocaml" # for example
 student_file="student.ml"
+LEARNOCAML_VERSION="0.8"
 
 ## Initial values
-bin=""
 dest_dir=""
 from_dir=""
 trim="false"
@@ -27,8 +27,9 @@ set -euo pipefail
 
 function usage () {
     cat <<EOF
-Usage: $(basename "$0") [options] -b BIN -f DIR [--] FILE.ml ...
-       $(basename "$0") [options] -b BIN -f DIR
+Usage: $(basename "$0") [options] -f DIR [--] DIR1/dm.ml ...
+       $(basename "$0") [options] -f DIR [--] */*.ml  # e.g.
+       $(basename "$0") [options] -f DIR
 
 Auto-grade OCaml assignments.
 
@@ -37,8 +38,6 @@ will be graded.
 
 Options:
   -h      display this help and exit
-
-  -b BIN  full path to the 'learnocaml-grader.byte' binary (mandatory)
 
   -d DIR  name of non-existing or empty directory to be populated with results
           (default: \$(mktemp -d $template))
@@ -73,9 +72,6 @@ while getopts "htb:f:d:m:kx:" opt; do
         t)
             trim="true"
             ;;
-        b)
-            bin="$OPTARG"
-            ;;
         f)
             from_dir="$OPTARG"
             ;;
@@ -97,18 +93,6 @@ while getopts "htb:f:d:m:kx:" opt; do
             ;;
     esac
 done
-
-if [ "x$bin" = "x" ]; then
-    echo "Error: you must specify the path to the learnocaml-grader binary (-b BIN)." >&2
-    usage >&2
-    exit 1
-fi
-
-if [ ! -x "$bin" ]; then
-    echo "Error: '$bin' does not exist or is not executable." >&2
-    usage >&2
-    exit 1
-fi
 
 if [ "x$from_dir" = "x" ]; then
     echo "Error: you must specify the path to the teacher's source folder (-f DIR)." >&2
@@ -143,7 +127,7 @@ function html-head () {
 <!doctype html>
 <html lang="en">
   <head>
-    <meta charset="ISO-8859-1">
+    <meta charset="UTF-8">
     <title>OCaml report - $1</title>
   </head>
   <body>
@@ -198,7 +182,7 @@ if [ "$teacher_itself" = "true" ]; then
     fi
 
     ## Main command: no -grade-student option.
-    RET=0; timeout "$max_time" "$bin" "-timeout" "$ind_time" "-display-progression" "-dump-reports" "$dir0/$report_prefix" "$dir0" || RET=$?
+    RET=0; sudo timeout "$max_time" /usr/bin/docker run --rm -v "$dir0:$dir0" --name learn-ocaml-corr ocamlsf/learn-ocaml:$LEARNOCAML_VERSION grade --dump-reports "$dir0/$report_prefix" --timeout "$ind_time" -e "$dir0" || RET=$?
 
     if [ $RET -eq 124 ]; then
         echo "Timeout. Maybe due to unbounded recursion?" > "$dir0/$report_prefix.timeout"
@@ -238,6 +222,12 @@ for arg; do
     echo "Grading '$arg'..." >&2
 
     base0=$(basename -s .ml "$arg")
+    if [[ "$arg" =~ "/" ]]; then
+        base1=$(basename "${arg%/$base0.ml}")
+        base1=${base1//_assignsubmission_file_/}  # drop Moodle suffix
+        base1=${base1// /_}
+        base0="${base1}_${base0}"
+    fi
     dir0="$dest_dir/$base0"
 
     mkdir -v "$dir0"
@@ -255,7 +245,7 @@ for arg; do
     fi
 
     ## Main command
-    RET=0; timeout "$max_time" "$bin" "-timeout" "$ind_time" "-display-progression" "-grade-student" "-dump-reports" "$dir0/$report_prefix" "$dir0" 2>&1 | tee "$dir0/$report_prefix.error" || RET=$?
+    RET=0; sudo timeout "$max_time" /usr/bin/docker run --rm -v "$dir0:$dir0" --name learn-ocaml-corr ocamlsf/learn-ocaml:$LEARNOCAML_VERSION grade --dump-reports "$dir0/$report_prefix" --timeout "$ind_time" -e "$dir0" "--grade-student" "$dir0/$student_file" 2>&1 | tee "$dir0/$report_prefix.error" || RET=$?
 
     if [ $RET -eq 124 ]; then
         cat >> "$errLog" <<EOF

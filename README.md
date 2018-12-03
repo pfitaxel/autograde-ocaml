@@ -13,17 +13,14 @@ For reporting bugs: feel free to create a [GitHub issue](https://github.com/pfit
 Usage summary
 -------------
 
-1. Clone the [pfitaxel fork of learn-ocaml](https://github.com/pfitaxel/learn-ocaml) and switch to branch wip:  
-   `git clone -b wip https://github.com/pfitaxel/learn-ocaml.git`
-2. Build learn-ocaml.
-3. Clone [this repo](https://github.com/pfitaxel/autograde-ocaml).
-4. **Write the teacher's solution (solution.ml) and ad-hoc grader (test.ml).**
-5. Put {prelude.ml,prepare.ml,solution.ml,test.ml} in the same folder (prof).
-6. Put all submissions in the same folder (submissions).
-7. Make sure that the OPAM environment variables are properly set.
-8. Run autograde-ocaml.bash:  
-   `.../autograde-ocaml.bash -b ... -f prof [-t]`  
-   `.../autograde-ocaml.bash -b ... -f prof [-t] -m 80 -x 60s -d results -- submissions/*.ml`  
-9. Address the failing submissions (compilation error, looping recursion, ...).
+1. Install Docker
+2. Clone this repo and inspect the `autograde-ocaml.bash` script.
+3. **Write the teacher's solution (solution.ml) and ad-hoc grader (test.ml).**
+4. Put {prelude.ml,prepare.ml,solution.ml,test.ml,template.ml} in the same folder (prof).
+5. Put all submissions in the same folder or in subdirs of the same folder (submissions).
+6. Run autograde-ocaml.bash:  
+   `.../autograde-ocaml.bash -f prof`  
+   `.../autograde-ocaml.bash -f prof -m 80 -x 60s -d results -- submissions/*/*.ml`  
+7. Address the failing submissions (compilation error, looping recursion, ...).
 
-(The step 4 above will typically be the most time-consuming task.)
+(The step 3 above will typically be the most time-consuming task.)
