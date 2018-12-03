@@ -167,7 +167,7 @@ function htmlify () {
 if [ "$teacher_itself" = "true" ]; then
     echo "Grading '$solution_file'..." >&2
 
-    dir0="$dest_dir"
+    dir0=$(readlink -f "$dest_dir")
 
     # (there is only one file to grade; no need to create subfolders)
 
@@ -228,7 +228,7 @@ for arg; do
         base1=${base1// /_}
         base0="${base1}_${base0}"
     fi
-    dir0="$dest_dir/$base0"
+    dir0=$(readlink -f "$dest_dir/$base0")
 
     mkdir -v "$dir0"
 
