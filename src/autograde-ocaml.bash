@@ -104,12 +104,15 @@ if [ "x$dest_dir" = "x" ]; then
     dest_dir=$(mktemp -d "$template")
     echo "Created directory '$dest_dir' that will be populated with results." >&2
 else
+    echo "Warning: option '-d' can lead to absolute path leaking:" >&2
+    echo 'e.g. "Match_failure /home/user/.../NOM_Prenom_12345_dm1/solution.ml:40:2"' >&2
+    read -r -s -p 'Press Enter to continue (or ^C to exit)...'; echo
     if [ -e "$dest_dir" ]; then
         if [ ! -d "$dest_dir" ] || ( ls -1qA "$dest_dir" | grep -q . ); then
             echo "Error: -d '$dest_dir': is a non-empty directory or an existing file." >&2
             usage >&2
             exit 1
-        # else OK
+            # else OK
         fi
     else
         mkdir -v -p "$dest_dir"
