@@ -10,7 +10,7 @@ test_file="test.ml"
 teach_files=(prelude.ml prepare.ml "$solution_file" "$test_file" template.ml)
 report_prefix="ocaml" # for example
 student_file="student.ml"
-LEARNOCAML_VERSION="0.8"
+LEARNOCAML_VERSION="0.11"
 
 ## Initial values
 dest_dir=""
