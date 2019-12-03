@@ -13,7 +13,7 @@ For reporting bugs: feel free to create a [GitHub issue](https://github.com/pfit
 Usage summary
 -------------
 
-1. Install Docker
+1. [Install Docker](https://github.com/coq-community/docker-coq/wiki/CLI-usage)
 2. Clone this repo and inspect the `autograde-ocaml.bash` script.
 3. **Write the teacher's solution (solution.ml) and ad-hoc grader (test.ml).**
 4. Put {prelude.ml,prepare.ml,solution.ml,test.ml,template.ml} in the same folder (prof).
