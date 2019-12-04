@@ -273,6 +273,7 @@ for arg; do
     ## Main command
     RET=0; sudo timeout "$max_time" /usr/bin/docker run --rm -v "$dir0:$dir0" --name learn-ocaml-corr ocamlsf/learn-ocaml:$LEARNOCAML_VERSION grade --dump-reports "$dir0/$report_prefix" --timeout "$ind_time" -e "$dir0" "--grade-student" "$dir0/$student_file" 2>&1 | tee "$dir0/$report_prefix.error" || RET=$?
 
+    ## TODO: Double-check the exit status
     if [ $RET -eq 124 ]; then
         cat >> "$errLog" <<EOF
 * Timeout: [[file:$base0/$report_prefix.error]]
