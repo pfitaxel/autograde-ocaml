@@ -10,6 +10,7 @@ test_file="test.ml"
 teach_files=(prelude.ml prepare.ml "$solution_file" "$test_file" template.ml)
 report_prefix="ocaml" # for example
 student_file="student.ml"
+note_file="note.csv"
 LEARNOCAML_VERSION="0.11"
 
 ## Initial values
@@ -59,6 +60,20 @@ Remark: make sure that the OPAM env. variables are properly set.
 
 Author: Erik Martin-Dorel.
 EOF
+}
+
+## Auxiliary function
+get_note () {
+    local file="$1"
+    local max="$2"
+    local name="$3"
+    set -e  # TODO: print warnings
+    [ -f "$file" ]
+    echo -n "$name,="
+    # TODO: document that this requires libxml2-utils
+    xmllint --html --xpath '//span[@class="title clickable"]/span[@class="score"]/text()' "$file" | sed -e 's, \?pts \?/ \?[0-9]\+,,'
+    # see also cat-sed-max()
+    if [ -n "$max" ]; then echo -n "/$max"; fi
 }
 
 ## Parse options
@@ -169,6 +184,7 @@ function htmlify () {
 
 if [ "$teacher_itself" = "true" ]; then
     echo "Grading '$solution_file'..." >&2
+    name="Prénom PROF"
 
     dir0=$(readlink -f "$dest_dir")
 
@@ -192,6 +208,7 @@ if [ "$teacher_itself" = "true" ]; then
         cat "$dir0/$report_prefix.timeout" >&2
     else
         htmlify "$dir0/$report_prefix.report.html" "$solution_file" "$max_pts"
+        get_note "$dir0/$report_prefix.report.html" "$max_pts" "$name" > "$dir0/$note_file"
     fi
 
     for f in "${teach_files[@]}"; do
@@ -225,11 +242,12 @@ for arg; do
     echo "Grading '$arg'..." >&2
 
     base0=$(basename -s .ml "$arg")
+    name="Prénom NOM"
     if [[ "$arg" =~ "/" ]]; then
         base1=$(basename "${arg%/$base0.ml}")
-        base1=${base1//_assignsubmission_file_/}  # drop Moodle suffix
-        base1=${base1// /_}
-        base0="${base1}_${base0}"
+        name=${base1//_assignsubmission_file_/}  # Moodle suffix
+        name=${name%%_*}
+        base0="${base1}"
     fi
     dir0=$(readlink -f "$dest_dir/$base0")
 
@@ -274,6 +292,7 @@ EOF
     else
         rm "$dir0/$report_prefix.error"
         htmlify "$dir0/$report_prefix.report.html" "$base0.ml" "$max_pts"
+        get_note "$dir0/$report_prefix.report.html" "$max_pts" "$name" > "$dir0/$note_file"
     fi
 
     for f in "${teach_files[@]}"; do
