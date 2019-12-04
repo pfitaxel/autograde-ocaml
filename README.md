@@ -22,5 +22,7 @@ Usage summary
    `.../autograde-ocaml.bash -f prof`  
    `.../autograde-ocaml.bash -f prof -m 80 -x 60s -k -- submissions/*/*.ml`  
 7. Address the failing submissions (compilation error, looping recursion, ...).
+8. Collect the `*.csv`:  
+   `find . -name "*.csv" -print0 | xargs --null -n 1 bash -c 'cat "$1"; echo' bash > res.txt`
 
 (The step 3 above will typically be the most time-consuming task.)
