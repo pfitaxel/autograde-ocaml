@@ -72,7 +72,7 @@ get_note () {
     [ -f "$file" ]
     echo -n "$name,$firstname,="
     # TODO: document that this requires libxml2-utils
-    xmllint --html --xpath '//span[@class="title clickable"]/span[@class="score"]/text()' "$file" | sed -e 's, \?pts \?/ \?[0-9]\+,,'
+    xmllint --html --xpath '//span[@class="title clickable"]/span[@class="score"]/text()' "$file" | sed -e 's, \?pts\? \?/ \?[0-9]\+,,'
     # see also cat-sed-max()
     if [ -n "$max" ]; then echo -n "/$max"; fi
 }
