@@ -271,7 +271,9 @@ for arg; do
     fi
 
     ## Main command
+    set -x
     RET=0; sudo timeout "$max_time" /usr/bin/docker run --rm -v "$dir0:$dir0" --name learn-ocaml-corr ocamlsf/learn-ocaml:$LEARNOCAML_VERSION grade --dump-reports "$dir0/$report_prefix" --timeout "$ind_time" -e "$dir0" "--grade-student" "$dir0/$student_file" 2>&1 | tee "$dir0/$report_prefix.error" || RET=$?
+    set +x
 
     ## TODO: Double-check the exit status
     if [ $RET -eq 124 ]; then
@@ -297,8 +299,8 @@ EOF
         fi
     else
         rm "$dir0/$report_prefix.error"
-        htmlify "$dir0/$report_prefix.report.html" "$base0.ml" "$max_pts"
-        get_note "$dir0/$report_prefix.report.html" "$max_pts" "$name" "$firstname" > "$dir0/$note_file"
+        htmlify "$dir0/$report_prefix.report.html" "$base0.ml" "$max_pts" || true
+        get_note "$dir0/$report_prefix.report.html" "$max_pts" "$name" "$firstname" > "$dir0/$note_file" || true
     fi
 
     for f in "${teach_files[@]}"; do
