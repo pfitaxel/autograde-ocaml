@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Copyright (c) 2016-2018  Erik Martin-Dorel.
+# Copyright (c) 2016-2021  Erik Martin-Dorel.
 
 # todo: rewrite using cmdliner?
 
@@ -62,7 +62,10 @@ Author: Erik Martin-Dorel.
 EOF
 }
 
-## Auxiliary function
+## Auxiliary functions
+
+pause () { read -r -p "$*"; }
+
 get_note () {
     local file="$1"
     local max="$2"
@@ -275,6 +278,9 @@ for arg; do
     RET=0; sudo timeout "$max_time" /usr/bin/docker run --rm -v "$dir0:$dir0" ocamlsf/learn-ocaml:$LEARNOCAML_VERSION grade --dump-reports "$dir0/$report_prefix" --timeout "$ind_time" -e "$dir0" "--grade-student" "$dir0/$student_file" 2>&1 | tee "$dir0/$report_prefix.error" || RET=$?
     set +x
 
+    # TODO: document that this requires perl
+    perl -i -wpe 's/\r\e\[K/\n/g' "$dir0/$report_prefix.error"
+
     ## TODO: Double-check the exit status
     if [ $RET -eq 124 ]; then
         cat >> "$errLog" <<EOF
@@ -298,7 +304,7 @@ EOF
             less "$dir0/$report_prefix.error"
         fi
     else
-        rm "$dir0/$report_prefix.error"
+        # rm "$dir0/$report_prefix.error"
         htmlify "$dir0/$report_prefix.report.html" "$base0.ml" "$max_pts" || true
         get_note "$dir0/$report_prefix.report.html" "$max_pts" "$name" "$firstname" > "$dir0/$note_file" || true
     fi
