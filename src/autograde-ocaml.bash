@@ -203,7 +203,7 @@ if [ "$teacher_itself" = "true" ]; then
     fi
 
     ## Main command: no -grade-student option.
-    RET=0; sudo timeout "$max_time" /usr/bin/docker run --rm -v "$dir0:$dir0" --name learn-ocaml-corr ocamlsf/learn-ocaml:$LEARNOCAML_VERSION grade --dump-reports "$dir0/$report_prefix" --timeout "$ind_time" -e "$dir0" || RET=$?
+    RET=0; sudo timeout "$max_time" /usr/bin/docker run --rm -v "$dir0:$dir0" ocamlsf/learn-ocaml:$LEARNOCAML_VERSION grade --dump-reports "$dir0/$report_prefix" --timeout "$ind_time" -e "$dir0" || RET=$?
 
     if [ $RET -eq 124 ]; then
         echo "Timeout. Maybe due to unbounded recursion?" > "$dir0/$report_prefix.timeout"
@@ -272,7 +272,7 @@ for arg; do
 
     ## Main command
     set -x
-    RET=0; sudo timeout "$max_time" /usr/bin/docker run --rm -v "$dir0:$dir0" --name learn-ocaml-corr ocamlsf/learn-ocaml:$LEARNOCAML_VERSION grade --dump-reports "$dir0/$report_prefix" --timeout "$ind_time" -e "$dir0" "--grade-student" "$dir0/$student_file" 2>&1 | tee "$dir0/$report_prefix.error" || RET=$?
+    RET=0; sudo timeout "$max_time" /usr/bin/docker run --rm -v "$dir0:$dir0" ocamlsf/learn-ocaml:$LEARNOCAML_VERSION grade --dump-reports "$dir0/$report_prefix" --timeout "$ind_time" -e "$dir0" "--grade-student" "$dir0/$student_file" 2>&1 | tee "$dir0/$report_prefix.error" || RET=$?
     set +x
 
     ## TODO: Double-check the exit status

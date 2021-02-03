@@ -30,5 +30,4 @@ Usage summary
 TODO
 ----
 
-* Ensure several instances can run in parallel
 * Ensure the log (ocaml.error) is kept and exported
