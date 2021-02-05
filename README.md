@@ -26,3 +26,8 @@ Usage summary
    `find . -name "*.csv" -print0 | xargs --null -n 1 bash -c 'cat "$1"; echo' bash > res.txt`
 
 (The step 3 above will typically be the most time-consuming task.)
+
+ToDo
+----
+
+* `get_note`: Ensure `xmllint --html --xpath …` always prints sth (dflt: 0)
