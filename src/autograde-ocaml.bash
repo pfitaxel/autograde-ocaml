@@ -7,11 +7,11 @@
 template="/tmp/autograde-ocaml.XXX"
 solution_file="solution.ml"
 test_file="test.ml"
-teach_files=(prelude.ml prepare.ml "$solution_file" "$test_file" template.ml)
+teach_files=(meta.json prelude.ml prepare.ml "$solution_file" "$test_file" template.ml)
 report_prefix="ocaml" # for example
 student_file="student.ml"
 note_file="note.csv"
-LEARNOCAML_VERSION="0.12"
+LEARNOCAML_VERSION="master"
 
 ## Initial values
 dest_dir=""
