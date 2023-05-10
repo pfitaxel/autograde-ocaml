@@ -12,10 +12,10 @@
 # let nom = "NOM" and prenom = "Prénom"
 
 # srcdir=$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null && pwd )
-srcdir=~/Desktop/pfita-2021-dm+PFITAXEL
-dest=~/Desktop/pfita-2021-dm+extract
+srcdir=~/Desktop/ilu_tpn_2023/sync
+dest=~/Desktop/ilu_tpn_2023/tograde
 
-dm=pfita-2021-dm
+dm=ilu-tpn
 
 find "$srcdir" -type f -name "$dm.ml" -exec \
      bash -c 'fil=$1; dm=$2; dest=$3; srcdir="${4%/}/"
