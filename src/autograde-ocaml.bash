@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Copyright (c) 2016-2021  Erik Martin-Dorel.
+# Copyright (c) 2016-2023  Erik Martin-Dorel.
 
 # todo: rewrite using cmdliner?
 
@@ -71,11 +71,12 @@ get_note () {
     local max="$2"
     local name="$3"
     local firstname="$4"
+    local token_or_id="$5"
     set -e  # TODO: print warnings
     [ -f "$file" ]
-    echo -n "$name,$firstname,="
+    echo -n "$name,$firstname,$token_or_id,="
     # TODO: document that this requires libxml2-utils
-    xmllint --html --xpath '//span[@class="title clickable"]/span[@class="score"]/text()' "$file" | sed -e 's, \?pts\? \?/ \?[0-9]\+,,'
+    xmllint --html --xpath '//span[@class="title clickable"]/span[@class="score"]/text()' "$file" | sed -e 's, \?pts\? \?/ \?[0-9]\+,,' | tr -d '\n'
     # see also cat-sed-max()
     if [ -n "$max" ]; then echo -n "/$max"; fi
 }
@@ -190,6 +191,7 @@ if [ "$teacher_itself" = "true" ]; then
     echo "Grading '$solution_file'..." >&2
     firstname="Prénom"
     name="PROF"
+    token_or_id="X"
 
     dir0=$(readlink -f "$dest_dir")
 
@@ -213,7 +215,7 @@ if [ "$teacher_itself" = "true" ]; then
         cat "$dir0/$report_prefix.timeout" >&2
     else
         htmlify "$dir0/$report_prefix.report.html" "$solution_file" "$max_pts"
-        get_note "$dir0/$report_prefix.report.html" "$max_pts" "$name" "$firstname" > "$dir0/$note_file"
+        get_note "$dir0/$report_prefix.report.html" "$max_pts" "$name" "$firstname" "$token_or_id" > "$dir0/$note_file"
     fi
 
     for f in "${teach_files[@]}"; do
@@ -249,9 +251,14 @@ for arg; do
     base0=$(basename -s .ml "$arg")
     firstname="Prénom"
     name="NOM"
+    token_or_id="None"
+
     if [[ "$arg" =~ "/" ]]; then
         base1=$(basename "${arg%/$base0.ml}")
         name=${base1//_assignsubmission_file_/}  # Moodle suffix
+        if [[ "$name" =~ "_-_" ]]; then
+            token_or_id="${name##*_-_}"
+        fi
         name=${name%%_*}
         firstname=$(sed -e 's/[A-Z -]\+$//' <<< "$name")
         name=${name#$firstname }
@@ -306,7 +313,7 @@ EOF
     else
         # rm "$dir0/$report_prefix.error"
         htmlify "$dir0/$report_prefix.report.html" "$base0.ml" "$max_pts" || true
-        get_note "$dir0/$report_prefix.report.html" "$max_pts" "$name" "$firstname" > "$dir0/$note_file" || true
+        get_note "$dir0/$report_prefix.report.html" "$max_pts" "$name" "$firstname" "$token_or_id" > "$dir0/$note_file" || true
     fi
 
     for f in "${teach_files[@]}"; do
