@@ -260,7 +260,7 @@ for arg; do
             token_or_id="${name##*_-_}"
         fi
         name=${name%%_*}
-        firstname=$(sed -e 's/[A-Z -]\+$//' <<< "$name")
+        firstname=$(sed -e 's/[A-Z'\'' -]\+$//' <<< "$name")
         name=${name#$firstname }
         base0="${base1}"
     fi
