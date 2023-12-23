@@ -11,7 +11,7 @@ teach_files=(meta.json prelude.ml prepare.ml "$solution_file" "$test_file" templ
 report_prefix="ocaml" # for example
 student_file="student.ml"
 note_file="note.csv"
-LEARNOCAML_VERSION="master"
+LEARNOCAML_VERSION="0.16.0"
 
 ## Initial values
 dest_dir=""
@@ -19,6 +19,7 @@ from_dir=""
 trim="false"
 teacher_itself="false"
 max_pts=""
+extract_nom="false"
 keep_going="false"
 max_time="60s"
 ind_time="4" # in secs
@@ -51,6 +52,8 @@ Options:
   -m INT  maximum number of points (optional): add the string "/ INT"
           in the html report
 
+  -l      get (nom, prenom, numero_etudiant) for get_note from ocaml.report.html
+
   -k      keep going: when there is an error with a submission, do not
           call 'less' on the error file
 
@@ -72,8 +75,15 @@ get_note () {
     local name="$3"
     local firstname="$4"
     local token_or_id="$5"
+    local metadata=""
     set -e  # TODO: print warnings
     [ -f "$file" ]
+    if [ "$extract_nom" = "true" ]; then
+        metadata=$(xmllint --html --xpath '(//div[@class="report"])[1]/p[@class="message informative"]/span[@class="text"]/text()' "$file" | grep -e 'nom:' -e 'prenom:' -e 'numero_etudiant:')
+        name=$(grep -e '^nom:' <<<"$metadata" | sed -e 's/^nom: //')
+        firstname=$(grep -e '^prenom:' <<<"$metadata" | sed -e 's/^prenom: //')
+        token_or_id=$(grep -e '^numero_etudiant:' <<<"$metadata" | sed -e 's/^numero_etudiant: //')
+    fi
     echo -n "$name,$firstname,$token_or_id,="
     # TODO: document that this requires libxml2-utils
     xmllint --html --xpath '//span[@class="title clickable"]/span[@class="score"]/text()' "$file" | sed -e 's, \?pts\? \?/ \?[0-9]\+,,' | tr -d '\n'
@@ -83,7 +93,7 @@ get_note () {
 
 ## Parse options
 OPTIND=1 # Reset is necessary if getopts was used previously in the script.  It is a good idea to make this local in a function.
-while getopts "htb:f:d:m:kx:" opt; do
+while getopts "htb:f:d:m:lkx:" opt; do
     case "$opt" in
         h)
             usage
@@ -100,6 +110,9 @@ while getopts "htb:f:d:m:kx:" opt; do
             ;;
         m)
             max_pts="$OPTARG"
+            ;;
+        l)
+            extract_nom="true"
             ;;
         k)
             keep_going="true"
