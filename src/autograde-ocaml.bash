@@ -116,7 +116,7 @@ get_note () {
 
 ## Parse options
 OPTIND=1 # Reset is necessary if getopts was used previously in the script.  It is a good idea to make this local in a function.
-while getopts "htb:f:ed:m:lkx:" opt; do
+while getopts "htf:ed:m:lkx:" opt; do
     case "$opt" in
         h)
             usage
