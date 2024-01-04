@@ -154,13 +154,13 @@ while getopts "htf:ed:m:lkx:" opt; do
     esac
 done
 
-if [ "x$from_dir" = "x" ]; then
+if [ -z "$from_dir" ]; then
     echo "Error: you must specify the path to the teacher's source folder (-f DIR)." >&2
     usage >&2
     exit 1
 fi
 
-if [ "x$dest_dir" = "x" ]; then
+if [ -z "$dest_dir" ]; then
     dest_dir=$(mktemp -d "$template")
     echo "Created directory '$dest_dir' that will be populated with results." >&2
 else
@@ -288,7 +288,7 @@ for arg; do
 done
 
 errLog="$dest_dir/error.org"
-> "$errLog"
+: > "$errLog"
 
 for arg; do
 
@@ -300,14 +300,14 @@ for arg; do
     token_or_id="None"
 
     if [[ "$arg" =~ "/" ]]; then
-        base1=$(basename "${arg%/$base0.ml}")
+        base1=$(basename "${arg%/"$base0".ml}")
         name=${base1//_assignsubmission_file_/}  # Moodle suffix
         if [[ "$name" =~ "_-_" ]]; then
             token_or_id="${name##*_-_}"
         fi
         name=${name%%_*}
         firstname=$(sed -e 's/[A-Z'\'' -]\+$//' <<< "$name")
-        name=${name#$firstname }
+        name=${name#"$firstname" }
         base0="${base1}"
     fi
     dir0=$(readlink -f "$dest_dir/$base0")
