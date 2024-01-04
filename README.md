@@ -20,8 +20,11 @@ Usage summary
 5. Put all submissions in the same folder or in subdirs of the same folder (submissions).
 6. Run autograde-ocaml.bash:  
    `.../autograde-ocaml.bash -f prof`  
-   `.../autograde-ocaml.bash -f prof -m 80 -x 60s -k -- submissions/*/*.ml`  
-7. Address the failing submissions (compilation error, looping recursion, ...).
+   `.../autograde-ocaml.bash -f prof -l -m 60 -x 60s -k -- submissions/*/*.ml`  
+7. Address the failing submissions (compilation error, looping recursion, ...).  
+   In case the student only clicked on Sync, not Grade:  
+   `cd TOKEN`  
+   `jq -r '"(* FROM save.json *)\n" + ."exercises-editors"."ue-tpn"[1]' save.json > ue-tpn.ml`  
 8. Collect the `*.csv`:  
    `find . -name "*.csv" -print0 | xargs --null -n 1 bash -c 'cat "$1"; echo' bash > res.txt`
 
@@ -31,3 +34,5 @@ ToDo
 ----
 
 * `get_note`: Ensure `xmllint --html --xpath …` always prints sth (dflt: 0)
+
+* `error.org`: Ensure it's nonempty/gathers compilation errors from docker-run.
