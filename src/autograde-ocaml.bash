@@ -8,6 +8,7 @@ template="/tmp/autograde-ocaml.XXX"
 solution_file="solution.ml"
 test_file="test.ml"
 teach_files=(meta.json prelude.ml prepare.ml "$solution_file" "$test_file" template.ml)
+depend_txt="depend.txt"
 report_prefix="ocaml" # for example
 student_file="student.ml"
 note_file="note.csv"
@@ -23,6 +24,8 @@ extract_nom="false"
 keep_going="false"
 max_time="60s"
 ind_time="4" # in secs
+depends_on_easy_check="false"
+easy_check=()
 
 ## Exit immediately in case of an error
 set -euo pipefail
@@ -47,6 +50,9 @@ Options:
   -f DIR  name of teacher's source folder (mandatory) containing:
           ${teach_files[@]}
 
+  -e      depends on easy-check, adding ${depend_txt} to copied files
+          and bind-mounting /tmp/easy-check path within Docker's CLI.
+
   -t      trim $test_file file by removing its first and last line
 
   -m INT  maximum number of points (optional): add the string "/ INT"
@@ -60,6 +66,23 @@ Options:
   -x 60s  timeout (default $max_time): maximum time length to grade one submission
 
 Remark: make sure that the OPAM env. variables are properly set.
+
+Remark': a typical ${depend_txt} file using easy-check contains:
+## easy-check
+../../easy-check/src/utils.ml
+../../easy-check/src/show/show.mli
+../../easy-check/src/show/show.ml
+../../easy-check/src/test_env/test_env.mli
+../../easy-check/src/test_env/test_env.ml
+../../easy-check/src/translation/translation.mli
+../../easy-check/src/translation/translation.ml
+#../../easy-check/src/protect/protect.mli
+#../../easy-check/src/protect/protect.ml
+../../easy-check/src/get/get.ml
+../../easy-check/src/get/get.mli
+../../easy-check/src/assume/assume.mli
+../../easy-check/src/assume/assume.ml
+## See also https://github.com/lsylvestre/easy-check
 
 Author: Erik Martin-Dorel.
 EOF
@@ -93,7 +116,7 @@ get_note () {
 
 ## Parse options
 OPTIND=1 # Reset is necessary if getopts was used previously in the script.  It is a good idea to make this local in a function.
-while getopts "htb:f:d:m:lkx:" opt; do
+while getopts "htb:f:ed:m:lkx:" opt; do
     case "$opt" in
         h)
             usage
@@ -104,6 +127,10 @@ while getopts "htb:f:d:m:lkx:" opt; do
             ;;
         f)
             from_dir="$OPTARG"
+            ;;
+        e)
+            depends_on_easy_check="true"
+            easy_check=(-v "/tmp/easy-check:/tmp/easy-check")
             ;;
         d)
             dest_dir="$OPTARG"
@@ -213,6 +240,9 @@ if [ "$teacher_itself" = "true" ]; then
     for f in "${teach_files[@]}"; do
         cp -pv "$from_dir/$f" "$dir0"
     done
+    if [ "$depends_on_easy_check" = "true" ]; then
+        cp -pv "$from_dir/$depend_txt" "$dir0"
+    fi
 
     ## Overwrite a trimmed file if need be
     if [ "$trim" = "true" ]; then
@@ -221,7 +251,7 @@ if [ "$teacher_itself" = "true" ]; then
     fi
 
     ## Main command: no -grade-student option.
-    RET=0; sudo timeout "$max_time" /usr/bin/docker run --rm -v "$dir0:$dir0" ocamlsf/learn-ocaml:$LEARNOCAML_VERSION grade --dump-reports "$dir0/$report_prefix" --timeout "$ind_time" -e "$dir0" || RET=$?
+    RET=0; sudo timeout "$max_time" /usr/bin/docker run --rm -v "$dir0:$dir0" "${easy_check[@]}" ocamlsf/learn-ocaml:$LEARNOCAML_VERSION grade --dump-reports "$dir0/$report_prefix" --timeout "$ind_time" -e "$dir0" || RET=$?
 
     if [ $RET -eq 124 ]; then
         echo "Timeout. Maybe due to unbounded recursion?" > "$dir0/$report_prefix.timeout"
@@ -234,6 +264,9 @@ if [ "$teacher_itself" = "true" ]; then
     for f in "${teach_files[@]}"; do
         rm -f "$dir0/$f"
     done
+    if [ "$depends_on_easy_check" = "true" ]; then
+        rm -f "$dir0/$depend_txt"
+    fi
 
     { echo "done."; echo; } >&2
 
@@ -286,6 +319,9 @@ for arg; do
     for f in "${teach_files[@]}"; do
         cp -pv "$from_dir/$f" "$dir0"
     done
+    if [ "$depends_on_easy_check" = "true" ]; then
+        cp -pv "$from_dir/$depend_txt" "$dir0"
+    fi
 
     ## Overwrite a trimmed file if need be
     if [ "$trim" = "true" ]; then
@@ -295,7 +331,7 @@ for arg; do
 
     ## Main command
     set -x
-    RET=0; sudo timeout "$max_time" /usr/bin/docker run --rm -v "$dir0:$dir0" ocamlsf/learn-ocaml:$LEARNOCAML_VERSION grade --dump-reports "$dir0/$report_prefix" --timeout "$ind_time" -e "$dir0" "--grade-student" "$dir0/$student_file" 2>&1 | tee "$dir0/$report_prefix.error" || RET=$?
+    RET=0; sudo timeout "$max_time" /usr/bin/docker run --rm -v "$dir0:$dir0" "${easy_check[@]}" ocamlsf/learn-ocaml:$LEARNOCAML_VERSION grade --dump-reports "$dir0/$report_prefix" --timeout "$ind_time" -e "$dir0" "--grade-student" "$dir0/$student_file" 2>&1 | tee "$dir0/$report_prefix.error" || RET=$?
     set +x
 
     # TODO: document that this requires perl
@@ -332,6 +368,9 @@ EOF
     for f in "${teach_files[@]}"; do
         rm -f "$dir0/$f"
     done
+    if [ "$depends_on_easy_check" = "true" ]; then
+        rm -f "$dir0/$depend_txt"
+    fi
 
     { echo "done."; echo; } >&2
 done
