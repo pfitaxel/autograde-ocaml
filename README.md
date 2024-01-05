@@ -26,7 +26,7 @@ Usage summary
    `cd TOKEN`  
    `jq -r '"(* FROM save.json *)\n" + ."exercises-editors"."ue-tpn"[1]' save.json > ue-tpn.ml`  
 8. Collect the `*.csv`:  
-   `find . -name "*.csv" -print0 | xargs --null -n 1 bash -c 'cat "$1"; echo' bash > res.txt`
+   `find . -name "*.csv" -print0 | xargs --null -n 1 bash -c 'printf "%s," "${1%/*.csv}"; cat "$1"; echo' bash > res.txt`
 
 (The step 3 above will typically be the most time-consuming task.)
 
