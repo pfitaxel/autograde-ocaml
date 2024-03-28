@@ -17,7 +17,9 @@ Usage summary
 2. Clone this repo and inspect the `autograde-ocaml.bash` script.
 3. **Write the teacher's solution (solution.ml) and ad-hoc grader (test.ml).**
 4. Put {prelude.ml,prepare.ml,solution.ml,test.ml,template.ml} in the same folder (prof).
-5. Put all submissions in the same folder or in subdirs of the same folder (submissions).
+5. Put all submissions in the same folder or in subdirs of the same folder (submissions). E.g.:__
+   `mkdir sync2`  
+   `find sync -name save.json -exec bash -c 'dir="$1"; dir=${dir%/save.json}; tok=${dir#sync/}; tok=${tok//\//-}; rsync -av "$dir/" "sync2/$tok"' bash '{}' \;`
 6. Run autograde-ocaml.bash:  
    `.../autograde-ocaml.bash -f prof`  
    `.../autograde-ocaml.bash -f prof -l -m 60 -x 60s -k -- submissions/*/*.ml`  
