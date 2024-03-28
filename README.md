@@ -19,10 +19,12 @@ Usage summary
 4. Put {prelude.ml,prepare.ml,solution.ml,test.ml,template.ml} in the same folder (prof).
 5. Put all submissions in the same folder or in subdirs of the same folder (submissions). E.g.:__
    `mkdir sync2`  
-   `find sync -name save.json -exec bash -c 'dir="$1"; dir=${dir%/save.json}; tok=${dir#sync/}; tok=${tok//\//-}; rsync -av "$dir/" "sync2/$tok"' bash '{}' \;`
+   `find sync -name save.json -exec bash -c 'dir="$1"; dir=${dir%/save.json}; tok=${dir#sync/}; tok=${tok//\//-}; rsync -av "$dir/" "sync2/$tok"' bash '{}' \;`  
 6. Run autograde-ocaml.bash:  
    `.../autograde-ocaml.bash -f prof`  
    `.../autograde-ocaml.bash -f prof -l -m 60 -x 60s -k -- submissions/*/*.ml`  
+   `rsync -av .../pfitaxel-exam-repository/src/easy-check /tmp/`  
+   `.../autograde-ocaml.bash -f prof -e -l -m 60 -x 30s -k $(find sync2 -name "tpn.ml")`  
 7. Address the failing submissions (compilation error, looping recursion, ...).  
    In case the student only clicked on Sync, not Grade:  
    `cd TOKEN`  
